@@ -1,5 +1,5 @@
 services:
-  postgres:
+  db:
     image: postgres
     environment:
       POSTGRES_PASSWORD: secret
@@ -13,6 +13,24 @@ services:
       - type: volume
         source: postgres
         target: /var/lib/postgresql/data
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "app"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+  db-init:
+    image: akring1729/fe-be-db-template-alembic:dev
+    build:
+      dockerfile: backend/alembic/Dockerfile
+      context: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: app
+      DB_USER: app
+      DB_PASSWORD: secret
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
   postgres:

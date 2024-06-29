@@ -1,9 +1,31 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
+from pydantic import PositiveInt, SecretStr
+from pydantic_settings import BaseSettings
+from sqlalchemy import create_engine
 from sqlalchemy import pool
 
 from alembic import context
+
+
+class Settings(BaseSettings):
+    db_host: str
+    db_port: PositiveInt
+    db_name: str
+    db_user: str
+    db_password: SecretStr
+
+
+def get_db_url(settings: Settings) -> str:
+    return (
+        f"postgresql+psycopg://"
+        f"{settings.db_user}:{settings.db_password.get_secret_value()}"
+        f"@{settings.db_host}/{settings.db_name}"
+    )
+
+
+settings = Settings()
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -38,9 +60,8 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=get_db_url(settings),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -57,11 +78,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    connectable = create_engine(get_db_url(settings))
 
     with connectable.connect() as connection:
         context.configure(
