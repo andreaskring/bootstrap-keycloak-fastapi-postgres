@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_APP_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: bind
+        source: ./postgres/db-init.sh
+        target: /docker-entrypoint-initdb.d/db-init.sh
+      - type: volume
+        source: postgres
+        target: /var/lib/postgresql/data
+
+volumes:
+  postgres:
