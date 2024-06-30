@@ -21,30 +21,30 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # Entity sets
     op.create_table(
-        "Category",
+        "category",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("name", sa.String(30), nullable=False),
         sa.Column("desc", sa.String(200), nullable=False),
     )
 
     op.create_table(
-        "Item",
+        "item",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("name", sa.String(30), nullable=False),
         sa.Column("desc", sa.String(100)),
     )
 
     op.create_table(
-        "Text",
-        sa.Column("id", sa.Integer, ForeignKey("Item.id"), primary_key=True),
+        "text",
+        sa.Column("id", sa.Integer, ForeignKey("item.id"), primary_key=True),
         sa.Column("txt", sa.Text(), nullable=False),
     )
 
     # Relations
     op.create_table(
-        "CategoryText",
-        sa.Column("cat_id", sa.Integer, ForeignKey("Category.id"), primary_key=True),
-        sa.Column("text_id", sa.Integer, ForeignKey("Text.id"), primary_key=True),
+        "category_text",
+        sa.Column("cat_id", sa.Integer, ForeignKey("category.id"), primary_key=True),
+        sa.Column("text_id", sa.Integer, ForeignKey("text.id"), primary_key=True),
     )
 
 
