@@ -26,41 +26,38 @@ async def lifespan(app: FastAPI):
     # Reflect the DB
 
 
-def create_app(*args, **kwargs) -> FastAPI:
-    settings = get_settings(*args, **kwargs)
-    engine = get_async_engine(settings)
-    # async_session = async_sessionmaker(engine, expire_on_commit=False)
+settings = get_settings()
+engine = get_async_engine(settings)
+async_session = async_sessionmaker(engine, expire_on_commit=False)
 
-    # async def async_db_session() -> AsyncGenerator[AsyncSession]:
-    #     async with async_session() as session:
-    #         print("######################")
-    #         print(type(session))
-    #         yield session
-    #         await session.aclose()
+# async def async_db_session() -> AsyncGenerator[AsyncSession]:
+#     async with async_session() as session:
+#         print("######################")
+#         print(type(session))
+#         yield session
+#         await session.aclose()
 
-    app = FastAPI(engine=engine, lifespan=lifespan)
+app = FastAPI(engine=engine, lifespan=lifespan)
 
-    @app.get("/")
-    async def root():
-        return {"message": "Hello World"}
 
-    @app.get("/category/{cat_id}")
-    async def category(
-        cat_id: int,
-        # db_session: AsyncSession = Depends(async_db_session)
-    ) -> dict:
-        print("Hurra")
-        async_session = async_sessionmaker(engine, expire_on_commit=False)
-        async with async_session() as session:
-            result = await session.execute(text("SELECT * FROM category"))
-            print(result)
-            for row in result:
-                print(row)
-        return {"foo": "bar"}
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
-    return app
+
+@app.get("/category/{cat_id}")
+async def category(
+    cat_id: int,
+    # db_session: AsyncSession = Depends(async_db_session)
+) -> dict:
+    print("Hurra")
+    async with async_session() as session:
+        result = await session.execute(text("SELECT * FROM category"))
+        print(result)
+        for row in result:
+            print(row)
+    return {"foo": "barx"}
 
 
 if __name__ == "__main__":
-    app = create_app()
     uvicorn.run(app, host="0.0.0.0", port=8000)
