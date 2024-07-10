@@ -1,0 +1,8 @@
+FROM hashicorp/terraform:latest
+
+WORKDIR /keycloak-init
+
+COPY keycloak/main.tf ./main.tf
+COPY keycloak/run-terraform.sh ./run-terraform.sh
+
+ENTRYPOINT ["/bin/sh", "run-terraform.sh"]

@@ -2,8 +2,10 @@ services:
   db:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: postgres
       POSTGRES_APP_PASSWORD: secret
+      POSTGRES_KEYCLOAK_PASSWORD: keycloak
+      POSTGRES_TERRAFORM_PASSWORD: terraform
     ports:
       - "5432:5432"
     volumes:
@@ -37,8 +39,38 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
     command: start-dev
     ports:
       - "8080:8080"
+      - "9000:9000"
+  wait-for-keycloak:
+    image: curlimages/curl:latest
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          if curl --head -fsS "http://keycloak:9000/health/ready" -o /dev/null
+          then
+            break
+          fi
+          echo "Waiting for Keycloak to be ready"
+          sleep 1
+        done
+        echo "Keycloak ready"
+  keycloak-init:
+    image: akring1729/fe-be-db-template-keycloak-init:dev
+    build:
+      dockerfile: keycloak/Dockerfile.init
+      context: .
+    environment:
+      PGUSER: terraform
+      PGPASSWORD: terraform
+      PGSSLMODE: disable
+      TF_VAR_keycloak_password: admin
+    depends_on:
+      wait-for-keycloak:
+        condition: service_completed_successfully
 volumes:
   postgres:
