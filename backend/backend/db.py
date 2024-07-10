@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy import Engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import declarative_base
 
 from backend.config import Settings
 
@@ -23,18 +23,3 @@ def get_engine(settings: Settings) -> Engine:
 
 def get_async_engine(settings: Settings) -> AsyncEngine:
     return create_async_engine(get_db_url(settings))
-
-
-# class Category(Base):
-#      __tablename__ = ""
-#
-#      id: Mapped[int] = mapped_column(primary_key=True)
-#      name: Mapped[str] = mapped_column(String(30))
-#      fullname: Mapped[Optional[str]]
-#
-#      addresses: Mapped[List["Address"]] = relationship(
-#          back_populates="user", cascade="all, delete-orphan"
-#      )
-#
-#      def __repr__(self) -> str:
-#          return f"User(id={self.id!r}, name={self.name!r}, fullname={self.fullname!r})"
