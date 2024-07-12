@@ -51,7 +51,7 @@ services:
       - -c
       - |
         while true; do
-          if curl --head -fsS "http://keycloak:9000/health/ready" -o /dev/null
+          if curl --head -fsS "http://keycloak:9000/health/ready"
           then
             break
           fi
@@ -69,6 +69,8 @@ services:
       PGPASSWORD: terraform
       PGSSLMODE: disable
       TF_VAR_keycloak_password: admin
+      TF_VAR_create_user: true
+      TF_VAR_user_password: bruce
     depends_on:
       wait-for-keycloak:
         condition: service_completed_successfully
