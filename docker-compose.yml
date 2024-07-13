@@ -74,5 +74,13 @@ services:
     depends_on:
       wait-for-keycloak:
         condition: service_completed_successfully
+  nginx:
+    image: nginx
+    volumes:
+      - type: bind
+        source: bootstrap
+        target: /usr/share/nginx/html
+    ports:
+      - "8081:80"
 volumes:
   postgres:
