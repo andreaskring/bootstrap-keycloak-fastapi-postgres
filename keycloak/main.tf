@@ -61,15 +61,17 @@ resource "keycloak_openid_client" "openid_client" {
   realm_id              = keycloak_realm.app.id
   client_id             = var.app_client_id
   access_type           = "PUBLIC"
+  standard_flow_enabled = true
   implicit_flow_enabled = true
   direct_access_grants_enabled = true
   #   service_accounts_enabled = false
 
   valid_redirect_uris = [
+    "*",
     "http://frontend/logout"
   ]
 
-  # web_origins = []
+  web_origins = ["*"]
   #full_scope_allowed =
 }
 
