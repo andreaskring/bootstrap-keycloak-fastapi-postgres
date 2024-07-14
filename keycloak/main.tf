@@ -66,6 +66,7 @@ resource "keycloak_openid_client" "openid_client" {
   direct_access_grants_enabled = true
   #   service_accounts_enabled = false
 
+  # TODO: fix
   valid_redirect_uris = [
     "*",
     "http://frontend/logout"

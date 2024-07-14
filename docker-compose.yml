@@ -70,6 +70,7 @@ services:
       PGSSLMODE: disable
       TF_VAR_keycloak_password: admin
       TF_VAR_create_user: true
+      # TODO: generate secret default in Dockerfile
       TF_VAR_user_password: bruce
     depends_on:
       wait-for-keycloak:
