@@ -44,6 +44,7 @@ variable "user_password" {
   sensitive = true
 }
 
+# Providers
 provider "keycloak" {
   client_id = var.keycloak_client_id
   username  = var.keycloak_user
@@ -64,13 +65,8 @@ resource "keycloak_openid_client" "openid_client" {
   standard_flow_enabled = true
   implicit_flow_enabled = true
   direct_access_grants_enabled = true
-  #   service_accounts_enabled = false
 
-  # TODO: fix
-  valid_redirect_uris = [
-    "*",
-    "http://frontend/logout"
-  ]
+  valid_redirect_uris = ["http://frontend/"]
 
   web_origins = ["*"]
   #full_scope_allowed =
