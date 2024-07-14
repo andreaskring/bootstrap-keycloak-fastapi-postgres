@@ -41,13 +41,22 @@ app = FastAPI(engine=engine, lifespan=lifespan)
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+def root():
+    return {"msg": "Hello (no auth required for this endpoint)"}
 
 
 @app.get("/require/auth")
-async def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
+def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
     return token
+
+
+@app.get("/keycloak")
+def keycloak_init() -> dict[str, str]:
+    return {
+        "url": f"{settings.auth_http_schema}://{settings.auth_host}:{settings.auth_port}",
+        "realm": settings.auth_realm,
+        "clientId": settings.auth_client_id,
+    }
 
 
 @app.get("/category/{cat_id}")
