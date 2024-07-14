@@ -25,7 +25,7 @@ variable "keycloak_password" {
 }
 variable "keycloak_url" {
   type    = string
-  default = "http://keycloak:8080"
+  default = "http://keycloak:8080/auth"
 }
 
 # Application client variables

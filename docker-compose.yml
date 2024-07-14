@@ -35,14 +35,19 @@ services:
       db:
         condition: service_healthy
   keycloak:
+    # TODO: add Keycloak DB
     image: quay.io/keycloak/keycloak:25.0.1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`keycloak`)"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HEALTH_ENABLED: "true"
+      KC_HTTP_RELATIVE_PATH: "/auth"
     command: start-dev
     ports:
-      - "8080:8080"
+      - "8090:8080"
       - "9000:9000"
   wait-for-keycloak:
     image: curlimages/curl:latest
@@ -51,7 +56,7 @@ services:
       - -c
       - |
         while true; do
-          if curl --head -fsS "http://keycloak:9000/health/ready"
+          if curl --head -fsS "http://keycloak:9000/auth/health/ready"
           then
             break
           fi
@@ -77,11 +82,31 @@ services:
         condition: service_completed_successfully
   nginx:
     image: nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`frontend`)"
     volumes:
       - type: bind
         source: bootstrap
         target: /usr/share/nginx/html
     ports:
       - "8081:80"
+  traefik:
+    image: traefik:latest
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+    ports:
+      # The HTTP port
+      - "8080:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8180:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
 volumes:
   postgres:
