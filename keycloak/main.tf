@@ -34,6 +34,10 @@ variable "app_client_id" {
   default = "app"
 }
 
+variable "valid_redirect_uris" {
+  type = list
+}
+
 variable "create_user" {
   type    = bool
   default = false
@@ -66,7 +70,7 @@ resource "keycloak_openid_client" "openid_client" {
   implicit_flow_enabled = true
   direct_access_grants_enabled = true
 
-  valid_redirect_uris = ["http://frontend/"]
+  valid_redirect_uris = var.valid_redirect_uris
 
   web_origins = ["*"]
   #full_scope_allowed =
