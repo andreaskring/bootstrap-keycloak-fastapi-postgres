@@ -72,7 +72,8 @@ resource "keycloak_openid_client" "openid_client" {
 
   valid_redirect_uris = var.valid_redirect_uris
 
-  web_origins = ["*"]
+  # Allow the same values (except for "*") as those set en valid_redirect_uris
+  web_origins = ["+"]
   #full_scope_allowed =
 }
 
