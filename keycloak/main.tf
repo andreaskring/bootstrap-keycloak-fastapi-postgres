@@ -72,7 +72,7 @@ resource "keycloak_openid_client" "openid_client" {
 
   valid_redirect_uris = var.valid_redirect_uris
 
-  # Allow the same values (except for "*") as those set en valid_redirect_uris
+  # Allow the same values (except for "*") as those set in valid_redirect_uris
   web_origins = ["+"]
   #full_scope_allowed =
 }
@@ -83,6 +83,7 @@ resource "keycloak_user" "bruce" {
   username = "bruce"
   enabled  = true
 
+  # TODO: fix hard-coded value
   email      = "bruce@kung.fu"
   first_name = "Bruce"
   last_name  = "Lee"
