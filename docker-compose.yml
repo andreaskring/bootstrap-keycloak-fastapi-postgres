@@ -47,7 +47,7 @@ services:
       KC_HTTP_RELATIVE_PATH: "/auth"
     command: start-dev
     ports:
-      - "8090:8080"
+      - "8080:8080"
       - "9000:9000"
   wait-for-keycloak:
     image: curlimages/curl:latest
@@ -100,7 +100,7 @@ services:
       - --providers.docker.exposedbydefault=false
     ports:
       # The HTTP port
-      - "8080:80"
+      - "80:80"
       # The Web UI (enabled by --api.insecure=true)
       - "8180:8080"
     volumes:
