@@ -21,6 +21,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script>
+        // TODO: JQuery onLoad stuff
         const keycloak = new Keycloak({
             url: 'http://localhost:8080',
             realm: 'app',
@@ -50,7 +51,7 @@
             }
         })
         .catch((error) => {
-            console.log("There was a initializing the Keycloak adapter!");
+            console.log("There was a problem initializing the Keycloak adapter!");
         });
     </script>
 
