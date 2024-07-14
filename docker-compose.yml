@@ -1,5 +1,6 @@
 services:
   db:
+    # TODO: from the logs: FATAL:  role "root" does not exist
     image: postgres
     environment:
       POSTGRES_PASSWORD: postgres
@@ -39,7 +40,7 @@ services:
     image: quay.io/keycloak/keycloak:25.0.1
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.keycloak.rule=Host(`keycloak`)"
+      - "traefik.http.routers.keycloak.rule=PathPrefix(`/auth`)"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -47,7 +48,7 @@ services:
       KC_HTTP_RELATIVE_PATH: "/auth"
     command: start-dev
     ports:
-      - "8080:8080"
+      - "8081:8080"
       - "9000:9000"
   wait-for-keycloak:
     image: curlimages/curl:latest
@@ -75,7 +76,7 @@ services:
       PGSSLMODE: disable
       TF_VAR_keycloak_password: admin
       TF_VAR_create_user: true
-      TF_VAR_valid_redirect_uris: '["http://frontend/"]'
+      TF_VAR_valid_redirect_uris: '["http://localhost:8080/frontend/"]'
       # TODO: generate secret default in Dockerfile
       TF_VAR_user_password: bruce
     depends_on:
@@ -85,13 +86,13 @@ services:
     image: nginx
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`frontend`)"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
     volumes:
       - type: bind
         source: bootstrap
-        target: /usr/share/nginx/html
+        target: /usr/share/nginx/html/frontend
     ports:
-      - "8081:80"
+      - "8082:80"
   traefik:
     image: traefik:latest
     # Enables the web UI and tells Traefik to listen to docker
@@ -99,9 +100,11 @@ services:
       - --api.insecure=true
       - --providers.docker
       - --providers.docker.exposedbydefault=false
+      - --log.level=DEBUG
+      - --accesslog
     ports:
       # The HTTP port
-      - "80:80"
+      - "8080:80"
       # The Web UI (enabled by --api.insecure=true)
       - "8180:8080"
     volumes:
