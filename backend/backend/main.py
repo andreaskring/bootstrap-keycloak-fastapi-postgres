@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator, Any
 
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, APIRouter
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
@@ -37,20 +37,21 @@ async def async_db_session() -> AsyncIterator[AsyncSession]:
         yield session
         await session.aclose()
 
-app = FastAPI(engine=engine, lifespan=lifespan)
+
+router = APIRouter()
 
 
-@app.get("/")
+@router.get("/")
 def root():
     return {"msg": "Hello (no auth required for this endpoint)"}
 
 
-@app.get("/require/auth")
+@router.get("/require/auth")
 def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
     return token
 
 
-@app.get("/keycloak")
+@router.get("/keycloak")
 def keycloak_init() -> dict[str, str]:
     return {
         "url": f"{settings.auth_http_schema}://{settings.auth_host}:{settings.auth_port}",
@@ -59,7 +60,7 @@ def keycloak_init() -> dict[str, str]:
     }
 
 
-@app.get("/category/{cat_id}")
+@router.get("/category/{cat_id}")
 async def category(
     cat_id: int,
     db_session: AsyncSession = Depends(async_db_session),
@@ -71,6 +72,10 @@ async def category(
         print(row)
 
     return {"foo": "barx"}
+
+
+app = FastAPI(engine=engine, lifespan=lifespan)
+app.include_router(router, prefix="/backend")
 
 
 if __name__ == "__main__":
