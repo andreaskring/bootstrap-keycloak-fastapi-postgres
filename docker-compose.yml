@@ -103,6 +103,10 @@ services:
       AUTH_CLIENT_ID: app
 
       ENVIRONMENT: development
+    volumes:
+      - type: bind
+        source: backend/backend
+        target: /app/backend
     ports:
       - "8082:8000"
   nginx:
