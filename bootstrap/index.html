@@ -39,14 +39,14 @@
 
                 console.log("Set up token refresher");
                 setInterval(() => {
-                    keycloak.updateToken(4)
+                    keycloak.updateToken(250)
                     .then(() => {
                         console.log("Token refreshed");
                     })
                     .catch(() => {
                         console.error("Failed to refresh token");
                     })
-                }, 4000)
+                }, 250000)
             }
         })
         .catch((error) => {
