@@ -1,7 +1,7 @@
 services:
   db:
-    # TODO: from the logs: FATAL:  role "root" does not exist
     image: postgres
+    user: postgres
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_APP_PASSWORD: secret
