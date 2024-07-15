@@ -51,15 +51,6 @@ def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
     return token
 
 
-@router.get("/keycloak")
-def keycloak_init() -> dict[str, str]:
-    return {
-        "url": f"{settings.auth_http_schema}://{settings.auth_host}:{settings.auth_port}",
-        "realm": settings.auth_realm,
-        "clientId": settings.auth_client_id,
-    }
-
-
 @router.get("/category/{cat_id}")
 async def category(
     cat_id: int,
