@@ -38,14 +38,35 @@ variable "valid_redirect_uris" {
   type = list(string)
 }
 
+# Keycloak realm user for testing
 variable "create_user" {
   type    = bool
   default = false
 }
 
+variable "user_username" {
+  type = string
+  default = "bruce"
+}
+
 variable "user_password" {
   type      = string
   sensitive = true
+}
+
+variable "user_first_name" {
+  type = string
+  default = "Bruce"
+}
+
+variable "user_last_name" {
+  type = string
+  default = "Lee"
+}
+
+variable "user_email" {
+  type = string
+  default = "bruce@kung.fu"
 }
 
 # Providers
@@ -80,13 +101,12 @@ resource "keycloak_openid_client" "openid_client" {
 resource "keycloak_user" "bruce" {
   count    = var.create_user ? 1 : 0
   realm_id = keycloak_realm.app.id
-  username = "bruce"
+  username = var.user_username
   enabled  = true
 
-  # TODO: fix hard-coded value
-  email      = "bruce@kung.fu"
-  first_name = "Bruce"
-  last_name  = "Lee"
+  email      = var.user_email
+  first_name = var.user_first_name
+  last_name  = var.user_last_name
 
   initial_password {
     value     = var.user_password
