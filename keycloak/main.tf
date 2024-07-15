@@ -35,7 +35,7 @@ variable "app_client_id" {
 }
 
 variable "valid_redirect_uris" {
-  type = list
+  type = list(string)
 }
 
 variable "create_user" {

@@ -1,5 +1,7 @@
 FROM hashicorp/terraform:latest
 
+RUN apk add util-linux
+
 WORKDIR /keycloak-init
 
 COPY keycloak/main.tf ./main.tf
