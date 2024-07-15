@@ -4,7 +4,7 @@ RUN apk add util-linux
 
 WORKDIR /keycloak-init
 
-COPY keycloak/main.tf ./main.tf
+COPY keycloak/keycloak-init.tf ./keycloak-init.tf
 COPY keycloak/run-terraform.sh ./run-terraform.sh
 
 ENTRYPOINT ["/bin/sh", "run-terraform.sh"]
