@@ -36,7 +36,6 @@ services:
       db:
         condition: service_healthy
   keycloak:
-    # TODO: add Keycloak DB
     image: quay.io/keycloak/keycloak:25.0.1
     labels:
       - "traefik.enable=true"
@@ -44,8 +43,14 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+
       KC_HEALTH_ENABLED: "true"
       KC_HTTP_RELATIVE_PATH: "/auth"
+
+      KC_DB: postgres
+      KC_DB_URL_HOST: db
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
     command: start-dev
     ports:
       - "8081:8080"
