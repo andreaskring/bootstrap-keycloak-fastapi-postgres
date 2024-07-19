@@ -17,7 +17,6 @@ keycloak.init({onLoad: 'login-required'})
         console.log("User authenticated");
 
         $("#main").load("main.html");
-        // document.body.innerHTML = "Logged in!";
 
         console.log("Set up token refresher");
         setInterval(() => {
