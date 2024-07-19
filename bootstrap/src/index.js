@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Keycloak from "keycloak-js";
 
 
@@ -15,8 +16,8 @@ keycloak.init({onLoad: 'login-required'})
     } else {
         console.log("User authenticated");
 
-        // $("#main").load("main.html");
-        document.body.innerHTML = "Logged in!";
+        $("#main").load("main.html");
+        // document.body.innerHTML = "Logged in!";
 
         console.log("Set up token refresher");
         setInterval(() => {
