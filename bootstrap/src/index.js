@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Keycloak from "keycloak-js";
+import './scss/styles.scss';
 
 
 const keycloak = new Keycloak({
