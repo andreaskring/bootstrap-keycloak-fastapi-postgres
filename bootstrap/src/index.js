@@ -11,24 +11,22 @@ const keycloak = new Keycloak({
 });
 
 function setupTabs() {
-    const triggerTabList = document.querySelectorAll('#mainMenu button')
-    console.log(triggerTabList);
-    triggerTabList.forEach(triggerEl => {
-        const tabTrigger = new bootstrap.Tab(triggerEl)
-        const mainDiv = document.querySelector("#mainMenuContent");
 
-        triggerEl.addEventListener('click', event => {
-            event.preventDefault()
-            console.log(triggerEl.id);
-            if (triggerEl.id == "home-tab") {
-                mainDiv.innerHTML = "This is home"
-            }
-            if (triggerEl.id == "category-tab") {
-                mainDiv.innerHTML = "These are the categories"
-            }
-            tabTrigger.show()
-        })
-    })
+    const homeTab = document.querySelector("#home-tab");
+    const categoryTab = document.querySelector("#category-tab");
+
+    const homeDiv = document.querySelector("#home");
+    const categoryDiv = document.querySelector("#category");
+
+    homeTab.addEventListener('click', event => {
+        event.preventDefault();
+        homeDiv.innerHTML = "Home set by button!"
+    });
+
+    categoryTab.addEventListener('click', event => {
+        event.preventDefault();
+        categoryDiv.innerHTML = "Category set by button!"
+    });
 }
 
 keycloak.init({onLoad: 'login-required'})
