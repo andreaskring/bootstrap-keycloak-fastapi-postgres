@@ -10,6 +10,19 @@ const keycloak = new Keycloak({
     clientId: 'app',
 });
 
+async function getCategories() {
+    const r = await fetch(window.location.origin + "/backend/category/1",
+        {
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${keycloak.token}`
+            }
+        }
+    );
+    return r.json();
+}
+
+
 function setupTabs() {
 
     const homeTab = document.querySelector("#home-tab");
@@ -25,6 +38,10 @@ function setupTabs() {
 
     categoryTab.addEventListener('click', event => {
         event.preventDefault();
+
+        const r = getCategories();
+        console.log(r);
+
         categoryDiv.innerHTML = "Category set by button!"
     });
 }

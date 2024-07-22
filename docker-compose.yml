@@ -46,6 +46,7 @@ services:
 
       KC_HEALTH_ENABLED: "true"
       KC_HTTP_RELATIVE_PATH: "/auth"
+      KC_LOG_LEVEL: INFO
 
       KC_DB: postgres
       KC_DB_URL_HOST: db

@@ -56,13 +56,21 @@ async def category(
     cat_id: int,
     db_session: AsyncSession = Depends(async_db_session),
     token: dict[str, Any] = Depends(auth),
-) -> dict:
+) -> list[dict]:
     result = await db_session.execute(text("SELECT * FROM category"))
-    print(result)
-    for row in result:
-        print(row)
 
-    return {"foo": "barx"}
+    response = [
+        {
+            "id": row[0],
+            "name": row[1],
+            "desc": row[2],
+        }
+        for row in result
+    ]
+
+    print(response)
+
+    return response
 
 
 app = FastAPI(engine=engine, lifespan=lifespan)
