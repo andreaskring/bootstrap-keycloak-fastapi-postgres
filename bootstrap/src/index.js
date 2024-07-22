@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import Keycloak from "keycloak-js";
 import './scss/styles.scss';
+import * as bootstrap from 'bootstrap'
 
 
 const keycloak = new Keycloak({
@@ -8,6 +9,27 @@ const keycloak = new Keycloak({
     realm: 'app',
     clientId: 'app',
 });
+
+function setupTabs() {
+    const triggerTabList = document.querySelectorAll('#mainMenu button')
+    console.log(triggerTabList);
+    triggerTabList.forEach(triggerEl => {
+        const tabTrigger = new bootstrap.Tab(triggerEl)
+        const mainDiv = document.querySelector("#mainMenuContent");
+
+        triggerEl.addEventListener('click', event => {
+            event.preventDefault()
+            console.log(triggerEl.id);
+            if (triggerEl.id == "home-tab") {
+                mainDiv.innerHTML = "This is home"
+            }
+            if (triggerEl.id == "category-tab") {
+                mainDiv.innerHTML = "These are the categories"
+            }
+            tabTrigger.show()
+        })
+    })
+}
 
 keycloak.init({onLoad: 'login-required'})
 .then((authenticated) => {
@@ -17,7 +39,7 @@ keycloak.init({onLoad: 'login-required'})
     } else {
         console.log("User authenticated");
 
-        $("#main").load("main.html");
+        $("#main").load("main.html", setupTabs);
 
         console.log("Set up token refresher");
         setInterval(() => {
@@ -34,3 +56,4 @@ keycloak.init({onLoad: 'login-required'})
 .catch((error) => {
     console.log("There was a problem initializing the Keycloak adapter!");
 });
+
