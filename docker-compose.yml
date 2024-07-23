@@ -114,17 +114,31 @@ services:
         target: /app/backend
     ports:
       - "8082:8000"
-  nginx:
-    image: nginx
+#  nginx:
+#    image: nginx
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
+#    volumes:
+#      - type: bind
+#        source: bootstrap/dist
+#        target: /usr/share/nginx/html/frontend
+#    ports:
+#      - "8083:80"
+  webpack:
+    image: akring1729/fe-be-db-template-webpack:dev
+    build:
+      dockerfile: bootstrap/Dockerfile
+      context: .
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
     volumes:
       - type: bind
-        source: bootstrap/dist
-        target: /usr/share/nginx/html/frontend
+        source: bootstrap/src
+        target: /bootstrap/src
     ports:
-      - "8083:80"
+      - "8084:8080"
   traefik:
     image: traefik:latest
     # Enables the web UI and tells Traefik to listen to docker
