@@ -82,7 +82,7 @@ services:
       PGSSLMODE: disable
       TF_VAR_keycloak_password: admin
       TF_VAR_create_user: true
-      TF_VAR_valid_redirect_uris: '["http://localhost:8080/frontend/"]'
+      TF_VAR_valid_redirect_uris: '["http://localhost:8080/frontend/", "http://localhost:8080/frontend-nginx/"]'
       TF_VAR_user_password: bruce
     depends_on:
       wait-for-keycloak:
@@ -114,17 +114,19 @@ services:
         target: /app/backend
     ports:
       - "8082:8000"
-#  nginx:
-#    image: nginx
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.frontend.rule=PathPrefix(`/frontend`)"
-#    volumes:
-#      - type: bind
-#        source: bootstrap/dist
-#        target: /usr/share/nginx/html/frontend
-#    ports:
-#      - "8083:80"
+  nginx:
+    image: nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend_nginx.rule=PathPrefix(`/frontend-nginx`)"
+    volumes:
+      - type: bind
+        source: bootstrap/dist
+        target: /usr/share/nginx/html/frontend-nginx
+    ports:
+      - "8083:80"
+    profiles:
+      - nginx
   webpack:
     image: akring1729/fe-be-db-template-webpack:dev
     build:
