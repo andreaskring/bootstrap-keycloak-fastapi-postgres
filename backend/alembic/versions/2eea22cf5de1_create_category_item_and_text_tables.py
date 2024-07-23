@@ -24,14 +24,14 @@ def upgrade() -> None:
         "category",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("name", sa.String(30), nullable=False),
-        sa.Column("desc", sa.String(200), nullable=False),
+        sa.Column("description", sa.String(200), nullable=False),
     )
 
     op.create_table(
         "item",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("name", sa.String(30), nullable=False),
-        sa.Column("desc", sa.String(100)),
+        sa.Column("description", sa.String(100)),
     )
 
     op.create_table(

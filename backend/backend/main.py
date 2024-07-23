@@ -63,7 +63,7 @@ async def category(
         {
             "id": row[0],
             "name": row[1],
-            "desc": row[2],
+            "description": row[2],
         }
         for row in result
     ]

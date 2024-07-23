@@ -35,6 +35,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  db-init-data:
+    image: akring1729/fe-be-db-template-db-init-data:dev
+    build:
+      dockerfile: backend/db_init_data/Dockerfile
+      context: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: app
+      DB_USER: app
+      DB_PASSWORD: secret
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.1
     labels:
