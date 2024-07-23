@@ -6,11 +6,24 @@ const autoprefixer = require('autoprefixer')
 
 module.exports = {
   mode: "development",
-  entry: './src/index.js',
+  entry: {
+    main: './src/index.js'
+  },
+  devtool: 'inline-source-map',
+  devServer: {
+    static: './dist',
+    client: {
+      webSocketURL: 'ws://0.0.0.0:8080/frontend/ws',
+    }
+  },
+  optimization: {
+    runtimeChunk: 'single',
+  },
   output: {
-    filename: 'main.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
+    publicPath: '/frontend',
   },
   plugins: [
     new HtmlWebpackPlugin({ template: 'src/index.html' }),
