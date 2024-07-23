@@ -5,6 +5,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWKClient, decode, InvalidTokenError
 from pydantic import ValidationError
 from starlette.status import HTTP_401_UNAUTHORIZED
+from structlog import get_logger
+
+logger = get_logger()
 
 
 class AuthenticationError(Exception):
@@ -45,7 +48,7 @@ def get_auth_dependency(
     verify_audience: bool = True,
     audience: str | list[str] | None = None,
 ):
-    keycloak_base_url = f"{http_schema}://{host}:{port}"
+    keycloak_base_url = f"{http_schema}://{host}:{port}/auth"
 
     # URI for obtaining JSON Web Key Set (JWKS), i.e. the public Keycloak key
     jwks_uri = keycloak_base_url + f"/realms/{realm}/protocol/openid-connect/certs"

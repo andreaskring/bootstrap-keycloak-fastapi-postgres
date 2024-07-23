@@ -1,2 +1,5 @@
 **/.idea
 **/__pycache__
+bootstrap/node_modules
+bootstrap/dist
+
