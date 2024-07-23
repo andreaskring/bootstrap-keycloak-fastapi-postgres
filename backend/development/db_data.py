@@ -2,7 +2,7 @@ from sqlalchemy import insert, create_engine, MetaData
 from sqlalchemy.orm import Session
 from structlog import get_logger
 
-from db_init_data.config import get_settings
+from development.config import get_settings
 
 
 if __name__ == "__main__":

@@ -15,6 +15,6 @@ COPY backend/pyproject.toml backend/poetry.lock ./
 RUN POETRY_NO_INTERACTION=1 /opt/poetry/bin/poetry install --no-root
 
 COPY backend/backend/db.py ./backend/db.py
-COPY backend/db_init_data/ ./db_init_data
+COPY backend/development/ ./development
 
-ENTRYPOINT ["python", "-m", "db_init_data.db_init"]
+ENTRYPOINT ["python", "-m", "development.db_data"]

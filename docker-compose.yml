@@ -38,7 +38,7 @@ services:
   db-init-data:
     image: akring1729/fe-be-db-template-db-init-data:dev
     build:
-      dockerfile: backend/db_init_data/Dockerfile
+      dockerfile: backend/development/Dockerfile
       context: .
     environment:
       DB_HOST: db
