@@ -11,6 +11,7 @@ const keycloak = new Keycloak({
 });
 
 async function getCategories() {
+    console.debug("Calling fetch...");
     const r = await fetch(window.location.origin + "/backend/category/1",
         {
             headers: {
@@ -19,7 +20,10 @@ async function getCategories() {
             }
         }
     );
-    return r.json();
+    console.debug("Fetch await done, calling json await...");
+    const json = await r.json();
+    console.debug("json await done");
+    return json
 }
 
 
@@ -39,10 +43,20 @@ function setupTabs() {
     categoryTab.addEventListener('click', event => {
         event.preventDefault();
 
+        categoryDiv.innerHTML = "";
         const r = getCategories();
-        console.log(r);
 
-        categoryDiv.innerHTML = "Category set by button!"
+        const ul = document.createElement("ul");
+        r.then((json) => {
+            console.log(json);
+            for (let cat of json) {
+                let li = document.createElement("li");
+                li.innerText = cat.name;
+                ul.appendChild(li);
+            }
+        });
+
+        categoryDiv.appendChild(ul);
     });
 }
 
