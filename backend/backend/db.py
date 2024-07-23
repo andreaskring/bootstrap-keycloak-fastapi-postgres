@@ -1,4 +1,5 @@
 from functools import cache
+from typing import Callable
 
 from sqlalchemy import create_engine, Table, MetaData
 from sqlalchemy import Engine
@@ -42,3 +43,13 @@ def get_tables(engine: Engine) -> FacadeDict[str, Table]:
     metadata_obj = MetaData()
     metadata_obj.reflect(bind=engine)
     return metadata_obj.tables
+
+
+def get_tables_dependency(settings: Settings) -> Callable[[], FacadeDict[str, Table]]:
+    engine = get_engine(settings)
+
+    @cache
+    def tables() -> FacadeDict[str, Table]:
+        return get_tables(engine)
+
+    return tables

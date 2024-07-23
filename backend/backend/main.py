@@ -3,25 +3,32 @@ from typing import AsyncIterator, Any
 
 import uvicorn
 from fastapi import FastAPI, Depends, APIRouter
-from sqlalchemy import text
+from sqlalchemy import text, Table, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.util import FacadeDict
 
 from backend.auth import get_auth_dependency
 from backend.config import get_settings
-from backend.db import get_async_engine
+from backend.db import get_async_engine, get_tables_dependency
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
     await app.extra["engine"].dispose()
-    # Reflect the DB
 
 
 settings = get_settings()
 
 engine = get_async_engine(settings)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
+
+
+async def async_db_session() -> AsyncIterator[AsyncSession]:
+    async with async_session() as session:
+        yield session
+        await session.aclose()
+
 
 auth = get_auth_dependency(
     host=settings.auth_host,
@@ -31,12 +38,7 @@ auth = get_auth_dependency(
     verify_audience=False,
 )
 
-
-async def async_db_session() -> AsyncIterator[AsyncSession]:
-    async with async_session() as session:
-        yield session
-        await session.aclose()
-
+tables = get_tables_dependency(settings)
 
 router = APIRouter()
 
@@ -49,6 +51,25 @@ def root():
 @router.get("/require/auth")
 def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
     return token
+
+
+@router.get("/categories")
+async def category(
+    db_session: AsyncSession = Depends(async_db_session),
+    db_tables: FacadeDict[str, Table] = Depends(tables),
+    token: dict[str, Any] = Depends(auth),
+) -> list[dict]:
+    stmt = select(db_tables["category"])
+    result = await db_session.execute(stmt)
+
+    return [
+        {
+            "id": id_,
+            "name": name,
+            "description": desc,
+        }
+        for id_, name, desc in result
+    ]
 
 
 @router.get("/category/{cat_id}")
@@ -73,7 +94,10 @@ async def category(
     return response
 
 
-app = FastAPI(engine=engine, lifespan=lifespan)
+app = FastAPI(
+    engine=engine,
+    lifespan=lifespan,
+)
 app.include_router(router, prefix="/backend")
 
 
