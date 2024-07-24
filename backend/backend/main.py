@@ -54,11 +54,11 @@ def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
 
 
 @router.get("/categories")
-async def category(
+async def categories(
     db_session: AsyncSession = Depends(async_db_session),
     db_tables: FacadeDict[str, Table] = Depends(tables),
-    token: dict[str, Any] = Depends(auth),
-) -> list[dict]:
+    # token: dict[str, Any] = Depends(auth),
+) -> list[dict[str, str | int]]:
     stmt = select(db_tables["category"])
     result = await db_session.execute(stmt)
 
@@ -76,28 +76,13 @@ async def category(
 async def category(
     cat_id: int,
     db_session: AsyncSession = Depends(async_db_session),
+    db_tables: FacadeDict[str, Table] = Depends(tables),
     token: dict[str, Any] = Depends(auth),
 ) -> list[dict]:
-    result = await db_session.execute(text("SELECT * FROM category"))
-
-    response = [
-        {
-            "id": row[0],
-            "name": row[1],
-            "description": row[2],
-        }
-        for row in result
-    ]
-
-    print(response)
-
-    return response
+    return []
 
 
-app = FastAPI(
-    engine=engine,
-    lifespan=lifespan,
-)
+app = FastAPI(engine=engine, lifespan=lifespan)
 app.include_router(router, prefix="/backend")
 
 
