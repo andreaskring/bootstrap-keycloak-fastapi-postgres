@@ -62,7 +62,7 @@ class TestOIDC(unittest.TestCase):
         self.loop = asyncio.get_event_loop()
 
     @staticmethod
-    def generate_token(parsed_token: dict, key: str) -> str:
+    def generate_token(parsed_token: dict, key: bytes) -> str:
         """
         Generate a request containing an auth header with a OIDC Bearer token
         :param parsed_token: parsed token (see example above)
