@@ -90,7 +90,7 @@ class TestOIDC(unittest.TestCase):
     #     )
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_auth_decodes_token(self, mock_get_signing_key_from_jwt):
         # Mock the public signing.key used in the auth function
@@ -104,7 +104,7 @@ class TestOIDC(unittest.TestCase):
         self.assertEqual(self.parsed_token, actual_token)
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_leeway(self, mock_get_signing_key_from_jwt):
         # Mock the public signing.key used in the auth function
@@ -119,7 +119,7 @@ class TestOIDC(unittest.TestCase):
         assert self.loop.run_until_complete(self.auth(token))
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_raise_exception_for_invalid_signature(
         self,
@@ -139,7 +139,7 @@ class TestOIDC(unittest.TestCase):
             assert isinstance(err.exception.exc, InvalidSignatureError)
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_raise_exception_for_expired_token(
         self,
@@ -159,7 +159,7 @@ class TestOIDC(unittest.TestCase):
             assert isinstance(err.exception.exc, ExpiredSignatureError)
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_ensure_get_signing_from_jwt_called(
         self,
@@ -178,7 +178,7 @@ class TestOIDC(unittest.TestCase):
         mock_get_signing_key_from_jwt.assert_called_once_with(token)
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_exception_when_aud_in_token_and_audience_is_not_set(
         self, mock_get_signing_key_from_jwt
@@ -195,7 +195,7 @@ class TestOIDC(unittest.TestCase):
             assert isinstance(err.exception.exc, InvalidAudienceError)
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_token_accepted_when_aud_in_token_and_audience_is_set(
         self, mock_get_signing_key_from_jwt
@@ -218,7 +218,7 @@ class TestOIDC(unittest.TestCase):
         assert self.loop.run_until_complete(auth(token))
 
     @unittest.mock.patch(
-        "backend.auth.oidc.jwt.PyJWKClient.get_signing_key_from_jwt"
+        "backend.auth.PyJWKClient.get_signing_key_from_jwt"
     )
     def test_token_accepted_when_aud_in_token_and_verify_aud_is_false(
         self, mock_get_signing_key_from_jwt
