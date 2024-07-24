@@ -3,7 +3,7 @@ from typing import AsyncIterator, Any
 
 import uvicorn
 from fastapi import FastAPI, Depends, APIRouter
-from sqlalchemy import text, Table, select
+from sqlalchemy import Table, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy.util import FacadeDict
 
@@ -57,7 +57,7 @@ def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
 async def categories(
     db_session: AsyncSession = Depends(async_db_session),
     db_tables: FacadeDict[str, Table] = Depends(tables),
-    # token: dict[str, Any] = Depends(auth),
+    token: dict[str, Any] = Depends(auth),
 ) -> list[dict[str, str | int]]:
     stmt = select(db_tables["category"])
     result = await db_session.execute(stmt)

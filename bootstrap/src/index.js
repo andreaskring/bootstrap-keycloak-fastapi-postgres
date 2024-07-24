@@ -12,7 +12,7 @@ const keycloak = new Keycloak({
 
 async function getCategories() {
     console.debug("Calling fetch...");
-    const r = await fetch(window.location.origin + "/backend/category/1",
+    const r = await fetch(window.location.origin + "/backend/categories",
         {
             headers: {
                 Accept: 'application/json',
