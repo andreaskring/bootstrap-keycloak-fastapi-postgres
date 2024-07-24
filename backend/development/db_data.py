@@ -1,4 +1,4 @@
-from sqlalchemy import insert, create_engine, MetaData
+from sqlalchemy import insert, create_engine, MetaData, delete
 from sqlalchemy.orm import Session
 from structlog import get_logger
 
@@ -26,6 +26,7 @@ if __name__ == "__main__":
 
     logger.info("Populate tables...")
     with Session(engine) as session:
+        session.execute(delete(category))
         session.execute(
             insert(category),
             [
