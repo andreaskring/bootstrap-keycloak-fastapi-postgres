@@ -18,73 +18,70 @@ async def lifespan(app: FastAPI):
     await app.extra["engine"].dispose()
 
 
-settings = get_settings()
+def create_app(*args, **kwargs) -> FastAPI:
+    settings = kwargs.get("settings") or get_settings()
 
-engine = get_async_engine(settings)
-async_session = async_sessionmaker(engine, expire_on_commit=False)
+    engine = get_async_engine(settings)
+    async_session = async_sessionmaker(engine, expire_on_commit=False)
 
+    async def async_db_session() -> AsyncIterator[AsyncSession]:
+        async with async_session() as session:
+            yield session
+            await session.aclose()
 
-async def async_db_session() -> AsyncIterator[AsyncSession]:
-    async with async_session() as session:
-        yield session
-        await session.aclose()
+    auth = get_auth_dependency(
+        host=settings.auth_host,
+        port=settings.auth_port,
+        realm=settings.auth_realm,
+        http_schema=settings.auth_http_schema,
+        verify_audience=False,
+    )
 
+    tables = get_tables_dependency(settings)
 
-auth = get_auth_dependency(
-    host=settings.auth_host,
-    port=settings.auth_port,
-    realm=settings.auth_realm,
-    http_schema=settings.auth_http_schema,
-    verify_audience=False,
-)
+    router = APIRouter()
 
-tables = get_tables_dependency(settings)
+    @router.get("/")
+    def root():
+        return {"msg": "Hello (no auth required for this endpoint)"}
 
-router = APIRouter()
+    @router.get("/require/auth")
+    def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
+        return token
 
+    @router.get("/categories")
+    async def categories(
+        db_session: AsyncSession = Depends(async_db_session),
+        db_tables: FacadeDict[str, Table] = Depends(tables),
+        token: dict[str, Any] = Depends(auth),
+    ) -> list[dict[str, str | int]]:
+        stmt = select(db_tables["category"])
+        result = await db_session.execute(stmt)
 
-@router.get("/")
-def root():
-    return {"msg": "Hello (no auth required for this endpoint)"}
+        return [
+            {
+                "id": id_,
+                "name": name,
+                "description": desc,
+            }
+            for id_, name, desc in result
+        ]
 
+    @router.get("/category/{cat_id}")
+    async def category(
+        cat_id: int,
+        db_session: AsyncSession = Depends(async_db_session),
+        db_tables: FacadeDict[str, Table] = Depends(tables),
+        token: dict[str, Any] = Depends(auth),
+    ) -> list[dict]:
+        return []
 
-@router.get("/require/auth")
-def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
-    return token
+    app = FastAPI(engine=engine, lifespan=lifespan)
+    app.include_router(router, prefix="/backend")
 
-
-@router.get("/categories")
-async def categories(
-    db_session: AsyncSession = Depends(async_db_session),
-    db_tables: FacadeDict[str, Table] = Depends(tables),
-    token: dict[str, Any] = Depends(auth),
-) -> list[dict[str, str | int]]:
-    stmt = select(db_tables["category"])
-    result = await db_session.execute(stmt)
-
-    return [
-        {
-            "id": id_,
-            "name": name,
-            "description": desc,
-        }
-        for id_, name, desc in result
-    ]
-
-
-@router.get("/category/{cat_id}")
-async def category(
-    cat_id: int,
-    db_session: AsyncSession = Depends(async_db_session),
-    db_tables: FacadeDict[str, Table] = Depends(tables),
-    token: dict[str, Any] = Depends(auth),
-) -> list[dict]:
-    return []
-
-
-app = FastAPI(engine=engine, lifespan=lifespan)
-app.include_router(router, prefix="/backend")
+    return app
 
 
 if __name__ == "__main__":
+    app = create_app()
     uvicorn.run(app, host="0.0.0.0", port=8000)
