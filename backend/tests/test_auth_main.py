@@ -7,7 +7,7 @@ from starlette.status import (
 )
 from pydantic import SecretStr
 
-from backend.config import get_settings
+from backend.config import get_settings, Settings
 from backend.main import create_app
 
 
@@ -16,9 +16,9 @@ def mock_env(monkeypatch: MonkeyPatch):
     monkeypatch.setenv("DB_HOST", "localhost")
 
 
-def test_root():
-    # Arrange
-    settings = get_settings(
+@pytest.fixture
+def mock_settings() -> Settings:
+    return get_settings(
         db_host="localhost",
         db_port=5432,
         db_name="app",
@@ -30,7 +30,11 @@ def test_root():
         auth_realm="app",
         auth_client_id="app"
     )
-    app = create_app(settings=settings)
+
+
+def test_root(mock_settings: Settings) -> None:
+    # Arrange
+    app = create_app(settings=mock_settings)
     client = TestClient(app)
 
     # Act
