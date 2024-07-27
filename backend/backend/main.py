@@ -39,9 +39,10 @@ def create_app(*args, **kwargs) -> FastAPI:
 
     tables = get_tables_dependency(settings)
 
+    app = FastAPI(engine=engine, lifespan=lifespan)
     router = APIRouter()
 
-    @router.get("/")
+    @app.get("/backend/")
     def root():
         return {"msg": "Hello (no auth required for this endpoint)"}
 
@@ -76,8 +77,11 @@ def create_app(*args, **kwargs) -> FastAPI:
     ) -> list[dict]:
         return []
 
-    app = FastAPI(engine=engine, lifespan=lifespan)
-    app.include_router(router, prefix="/backend")
+    app.include_router(
+        router,
+        prefix="/backend",
+        dependencies=[Depends(auth)]
+    )
 
     return app
 
