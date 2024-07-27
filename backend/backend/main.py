@@ -1,15 +1,14 @@
 from contextlib import asynccontextmanager
-from typing import AsyncIterator, Any
+from typing import AsyncIterator
 
 import uvicorn
-from fastapi import FastAPI, Depends, APIRouter
-from sqlalchemy import Table, select
+from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
-from sqlalchemy.util import FacadeDict
 
 from backend.auth import get_auth_dependency
 from backend.config import get_settings
 from backend.db import get_async_engine, get_tables_dependency
+from backend.endpoints import get_router
 
 
 @asynccontextmanager
@@ -29,6 +28,8 @@ def create_app(*args, **kwargs) -> FastAPI:
             yield session
             await session.aclose()
 
+    tables = get_tables_dependency(settings)
+
     auth = get_auth_dependency(
         host=settings.auth_host,
         port=settings.auth_port,
@@ -37,48 +38,18 @@ def create_app(*args, **kwargs) -> FastAPI:
         verify_audience=False,
     )
 
-    tables = get_tables_dependency(settings)
-
     app = FastAPI(engine=engine, lifespan=lifespan)
-    router = APIRouter()
 
     @app.get("/backend/")
     def root():
         return {"msg": "Hello (no auth required for this endpoint)"}
 
-    @router.get("/require/auth")
-    def require_auth(token: dict[str, Any] = Depends(auth)) -> dict[str, Any]:
-        return token
-
-    @router.get("/categories")
-    async def categories(
-        db_session: AsyncSession = Depends(async_db_session),
-        db_tables: FacadeDict[str, Table] = Depends(tables),
-        token: dict[str, Any] = Depends(auth),
-    ) -> list[dict[str, str | int]]:
-        stmt = select(db_tables["category"])
-        result = await db_session.execute(stmt)
-
-        return [
-            {
-                "id": id_,
-                "name": name,
-                "description": desc,
-            }
-            for id_, name, desc in result
-        ]
-
-    @router.get("/category/{cat_id}")
-    async def category(
-        cat_id: int,
-        db_session: AsyncSession = Depends(async_db_session),
-        db_tables: FacadeDict[str, Table] = Depends(tables),
-        token: dict[str, Any] = Depends(auth),
-    ) -> list[dict]:
-        return []
-
     app.include_router(
-        router,
+        get_router(
+            auth=auth,
+            async_db_session=async_db_session,
+            tables=tables,
+        ),
         prefix="/backend",
         dependencies=[Depends(auth)]
     )
