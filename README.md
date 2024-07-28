@@ -10,7 +10,7 @@ the following components:
 4. A [PostgreSQL](https://www.postgresql.org/) database for persisting data.
 
 The intent of this GitHub project is that it can be cloned and modified to get you
-quickly up and running for whatever kind of full stack application need you to
+quickly up and running for whatever kind of full stack application you need to
 implement. The components and libraries used facilitate loose couplings between
 things, so it should be easy to replace a component to something else, if you prefer
 that. For now, we provide a [Docker](https://www.docker.com/) stack for the
