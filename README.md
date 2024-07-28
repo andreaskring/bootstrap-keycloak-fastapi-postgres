@@ -87,7 +87,8 @@ handled by [Terraform](https://www.terraform.io/) by using this
 [Keycloak provider](https://registry.terraform.io/providers/mrparkers/keycloak/latest/docs).
 
 ### backend
-The FastAPI (Python) RESTful backend. The application is running async and
+The FastAPI RESTful backend (REST API written in Python). The
+application is running async and
 the database communication is also handled by the asyncio facilities
 in [SQLAlchemy](https://www.sqlalchemy.org/).
 
