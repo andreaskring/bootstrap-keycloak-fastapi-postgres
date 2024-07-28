@@ -115,7 +115,7 @@ Most of the endpoints in the backend are protected and thus require
 authentication via the
 [openid-connect](https://auth0.com/docs/authenticate/protocols/openid-connect-protocol)
 (OIDC) protocol. In practice, this means that you will need an OIDC token
-from Keycloak that must be passed along in an `Authentication` header
+from Keycloak that must be passed along in an `Authorization` header
 when calling the backend. An OIDC token can be obtained from Keycloak as follows
 (for the user `bruce` created in the realm named `app` by the Terraform code in
 the `keycloak-init` container):
