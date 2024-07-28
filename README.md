@@ -2,12 +2,12 @@
 
 This project servers as a template project for a full stack application containing
 the following components:
-1. A frontend written in [Bootstrap](https://getbootstrap.com/).
-2. A [Keycloak](https://www.keycloak.org/) auth engine handling authentication
+1. Frontend written in [Bootstrap](https://getbootstrap.com/).
+2. [Keycloak](https://www.keycloak.org/) auth engine handling authentication
    and authorization.
-3. A RESTful backend service written in [FastAPI](https://fastapi.tiangolo.com/)
+3. RESTful backend service written in [FastAPI](https://fastapi.tiangolo.com/)
    (i.e. a [Python](https://www.python.org/) application).
-4. A [PostgreSQL](https://www.postgresql.org/) database for persisting data.
+4. [PostgreSQL](https://www.postgresql.org/) database for persisting data.
 
 The intent of this GitHub project is that it can be cloned and modified to get you
 quickly up and running for whatever kind of full stack application you need to
