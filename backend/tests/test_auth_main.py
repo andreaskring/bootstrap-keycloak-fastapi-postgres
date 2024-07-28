@@ -128,3 +128,15 @@ def test_require_auth(mock_settings: Settings) -> None:
 
     # Assert
     assert r.status_code == HTTP_401_UNAUTHORIZED
+
+
+def test_categories(mock_settings: Settings) -> None:
+    # Arrange
+    app = create_app(settings=mock_settings)
+    client = TestClient(app)
+
+    # Act
+    r = client.get("/backend/categories")
+
+    # Assert
+    assert r.status_code == HTTP_401_UNAUTHORIZED
