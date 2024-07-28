@@ -12,8 +12,8 @@ the following components:
 The intent of this GitHub project is that it can be cloned and modified to get you
 quickly up and running for whatever kind of full stack application you need to
 implement. The components and libraries used facilitate loose couplings between
-things, so it should be easy to replace a component to something else, if you prefer
-that. For now, we provide a [Docker](https://www.docker.com/) stack for the
+things, so it should be easy to replace a component with something else, if you prefer
+that. For now, we provide a [Docker](https://www.docker.com/) Compose stack for the
 development environment (_do not use this "as is" directly in production!_), but it
 should be a fairly easy task translate this to e.g. a [Helm chart](https://helm.sh/)
 facilitating a [Kubernetes](https://kubernetes.io/) deployment giving you all the
