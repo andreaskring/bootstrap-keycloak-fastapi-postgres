@@ -3,28 +3,14 @@ import Keycloak from "keycloak-js";
 import './scss/styles.scss';
 import * as bootstrap from 'bootstrap'
 
+import { getCategories } from './category';
+
 
 const keycloak = new Keycloak({
     url: window.location.origin + "/auth",
     realm: 'app',
     clientId: 'app',
 });
-
-async function getCategories() {
-    console.debug("Calling fetch...");
-    const r = await fetch(window.location.origin + "/backend/categories",
-        {
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${keycloak.token}`
-            }
-        }
-    );
-    console.debug("Fetch await done, calling json await...");
-    const json = await r.json();
-    console.debug("json await done");
-    return json
-}
 
 
 function setupTabs() {
@@ -44,7 +30,7 @@ function setupTabs() {
         event.preventDefault();
 
         categoryDiv.innerHTML = "";
-        const r = getCategories();
+        const r = getCategories(keycloak.token);
 
         const ul = document.createElement("ul");
         r.then((json) => {

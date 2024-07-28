@@ -7,7 +7,8 @@ const autoprefixer = require('autoprefixer')
 module.exports = {
   mode: "development",
   entry: {
-    main: './src/index.js'
+    main: './src/index.js',
+    category: './src/category.js'
   },
   devtool: 'inline-source-map',
   devServer: {
