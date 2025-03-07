@@ -105,7 +105,7 @@ flag.
 ### webpack
 A [Webpack](https://webpack.js.org/) service running the Bootstrap
 frontend with hot-reloading enabled, i.e. source code changes will
-be picked automatically.
+be picked up automatically.
 
 ### traefik
 A reverse proxy for (some of) the above components. 
